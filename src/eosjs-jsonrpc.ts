@@ -19,6 +19,7 @@ function arrayToHex(data: Uint8Array) {
 /** Make RPC calls */
 export default class JsonRpc implements AuthorityProvider, AbiProvider {
     public endpoint: string;
+    public WalletCoreApi: any;
     public fetchBuiltin: (input?: Request | string, init?: RequestInit) => Promise<Response>;
 
     /**
@@ -27,14 +28,26 @@ export default class JsonRpc implements AuthorityProvider, AbiProvider {
      *      * browsers: leave `null` or `undefined`
      *      * node: provide an implementation
      */
-    constructor(endpoint: string, args:
+    constructor(endpoint: string, WalletCoreApi: Object, args:
         { fetch?: (input?: string | Request, init?: RequestInit) => Promise<Response> } = {},
     ) {
         this.endpoint = endpoint;
+        this.WalletCoreApi = WalletCoreApi;
         if (args.fetch) {
             this.fetchBuiltin = args.fetch;
         } else {
             this.fetchBuiltin = (global as any).fetch;
+        }
+    }
+
+    public async iblFetch(functionName: string, param?: Object) {
+        try {
+            // console.log('vvvv',this.WalletCoreApi, this.WalletCoreApi[functionName])
+            const res = await this.WalletCoreApi[functionName](param);
+            return res.data.data
+        } catch (e) {
+            console.log('ttttttt', e)
+            throw e
         }
     }
 
@@ -83,7 +96,7 @@ export default class JsonRpc implements AuthorityProvider, AbiProvider {
     /** Raw call to `/v1/chain/get_block` */
     // tslint:disable-next-line:variable-name
     public async get_block(block_num_or_id: number | string): Promise<GetBlockResult> {
-        return await this.fetch("/v1/chain/get_block", { block_num_or_id });
+        return await this.iblFetch('getEosBlock', { id: block_num_or_id })
     }
 
     /** Raw call to `/v1/chain/get_code` */
@@ -104,7 +117,7 @@ export default class JsonRpc implements AuthorityProvider, AbiProvider {
 
     /** Raw call to `/v1/chain/get_info` */
     public async get_info(): Promise<GetInfoResult> {
-        return await this.fetch("/v1/chain/get_info", {});
+        return await this.iblFetch('getEosInfo')
     }
 
     /** Raw call to `/v1/chain/get_producer_schedule` */
@@ -121,7 +134,7 @@ export default class JsonRpc implements AuthorityProvider, AbiProvider {
     /** Raw call to `/v1/chain/get_raw_code_and_abi` */
     // tslint:disable-next-line:variable-name
     public async get_raw_code_and_abi(account_name: string): Promise<GetRawCodeAndAbiResult> {
-        return await this.fetch("/v1/chain/get_raw_code_and_abi", { account_name });
+        return await this.iblFetch('getEosRawCodeAndAbi', { accountName: account_name });
     }
 
     /** calls `/v1/chain/get_raw_code_and_abi` and pulls out unneeded raw wasm code */
@@ -144,8 +157,6 @@ export default class JsonRpc implements AuthorityProvider, AbiProvider {
         index_position = 1,
         key_type = "",
         limit = 10,
-        reverse = false,
-        show_payer = false,
      }: any): Promise<any> {
         return await this.fetch(
             "/v1/chain/get_table_rows", {
@@ -159,16 +170,14 @@ export default class JsonRpc implements AuthorityProvider, AbiProvider {
                 index_position,
                 key_type,
                 limit,
-                reverse,
-                show_payer,
             });
     }
 
     /** Get subset of `availableKeys` needed to meet authorities in `transaction`. Implements `AuthorityProvider` */
     public async getRequiredKeys(args: AuthorityProviderArgs): Promise<string[]> {
-        return convertLegacyPublicKeys((await this.fetch("/v1/chain/get_required_keys", {
+        return convertLegacyPublicKeys((await this.iblFetch("getEosRequiredKeys", {
             transaction: args.transaction,
-            available_keys: args.availableKeys,
+            availableKeys: args.availableKeys,
         })).required_keys);
     }
 

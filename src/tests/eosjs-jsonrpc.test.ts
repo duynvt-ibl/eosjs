@@ -354,8 +354,6 @@ describe("JSON RPC", () => {
         const indexPosition = 1;
         const keyType = "str";
         const expReturn = { data: "12345" };
-        const reverse = false;
-        const showPayer = false;
         const callParams = {
             json,
             code,
@@ -367,8 +365,6 @@ describe("JSON RPC", () => {
             index_position: indexPosition,
             key_type: keyType,
             limit,
-            reverse,
-            show_payer: showPayer,
         };
         const expParams = {
             body: JSON.stringify(callParams),
@@ -395,8 +391,6 @@ describe("JSON RPC", () => {
         const limit = 10;
         const indexPosition = 1;
         const keyType = "";
-        const reverse = false;
-        const showPayer = false;
         const expReturn = { data: "12345" };
         const callParams = {
             code,
@@ -415,8 +409,6 @@ describe("JSON RPC", () => {
                 index_position: indexPosition,
                 key_type: keyType,
                 limit,
-                reverse,
-                show_payer: showPayer,
             }),
             method: "POST",
         };

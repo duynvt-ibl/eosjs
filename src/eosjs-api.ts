@@ -238,7 +238,6 @@ export default class Api {
         transaction = { ...transaction, actions: await this.serializeActions(transaction.actions) };
         const serializedTransaction = this.serializeTransaction(transaction);
         let pushTransactionArgs: PushTransactionArgs  = { serializedTransaction, signatures: [] };
-
         if (sign) {
             const availableKeys = await this.signatureProvider.getAvailableKeys();
             const requiredKeys = await this.authorityProvider.getRequiredKeys({ transaction, availableKeys });
@@ -249,10 +248,11 @@ export default class Api {
                 abis,
             });
         }
-        if (broadcast) {
-            return this.pushSignedTransaction(pushTransactionArgs);
+        return {
+            compression: "none",
+            transaction: this.deserializeTransaction(pushTransactionArgs.serializedTransaction),
+            signatures: pushTransactionArgs.signatures
         }
-        return pushTransactionArgs;
     }
 
     /** Broadcast a signed transaction */
