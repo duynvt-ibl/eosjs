@@ -185,8 +185,10 @@ var JsonRpc = /** @class */ (function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.iblFetch('getEosBlock', { id: block_num_or_id })];
-                    case 1: return [2 /*return*/, _a.sent()];
+                    case 0: return [4 /*yield*/, this.fetch("/v1/chain/get_block", { block_num_or_id: block_num_or_id })];
+                    case 1: 
+                    // return await this.iblFetch('getEosBlock', { id: block_num_or_id })
+                    return [2 /*return*/, _a.sent()];
                 }
             });
         });
@@ -231,8 +233,10 @@ var JsonRpc = /** @class */ (function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.iblFetch('getEosInfo')];
-                    case 1: return [2 /*return*/, _a.sent()];
+                    case 0: return [4 /*yield*/, this.fetch("/v1/chain/get_info", {})];
+                    case 1: 
+                    // return await this.iblFetch('getEosInfo')
+                    return [2 /*return*/, _a.sent()];
                 }
             });
         });
@@ -269,8 +273,10 @@ var JsonRpc = /** @class */ (function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.iblFetch('getEosRawCodeAndAbi', { accountName: account_name })];
-                    case 1: return [2 /*return*/, _a.sent()];
+                    case 0: return [4 /*yield*/, this.fetch("/v1/chain/get_raw_code_and_abi", { account_name: account_name })];
+                    case 1: 
+                    // return await this.iblFetch('getEosRawCodeAndAbi', { accountName: account_name });
+                    return [2 /*return*/, _a.sent()];
                 }
             });
         });
@@ -322,11 +328,16 @@ var JsonRpc = /** @class */ (function () {
                 switch (_b.label) {
                     case 0:
                         _a = eosjs_numeric_1.convertLegacyPublicKeys;
-                        return [4 /*yield*/, this.iblFetch("getEosRequiredKeys", {
+                        return [4 /*yield*/, this.fetch("/v1/chain/get_required_keys", {
                                 transaction: args.transaction,
-                                availableKeys: args.availableKeys,
+                                available_keys: args.availableKeys,
                             })];
-                    case 1: return [2 /*return*/, _a.apply(void 0, [(_b.sent()).required_keys])];
+                    case 1: 
+                    // return convertLegacyPublicKeys((await this.iblFetch("getEosRequiredKeys", {
+                    //     transaction: args.transaction,
+                    //     availableKeys: args.availableKeys,
+                    // })).required_keys);
+                    return [2 /*return*/, _a.apply(void 0, [(_b.sent()).required_keys])];
                 }
             });
         });

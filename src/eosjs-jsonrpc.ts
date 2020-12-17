@@ -96,7 +96,8 @@ export default class JsonRpc implements AuthorityProvider, AbiProvider {
     /** Raw call to `/v1/chain/get_block` */
     // tslint:disable-next-line:variable-name
     public async get_block(block_num_or_id: number | string): Promise<GetBlockResult> {
-        return await this.iblFetch('getEosBlock', { id: block_num_or_id })
+        // return await this.iblFetch('getEosBlock', { id: block_num_or_id })
+        return await this.fetch("/v1/chain/get_block", { block_num_or_id });
     }
 
     /** Raw call to `/v1/chain/get_code` */
@@ -117,7 +118,8 @@ export default class JsonRpc implements AuthorityProvider, AbiProvider {
 
     /** Raw call to `/v1/chain/get_info` */
     public async get_info(): Promise<GetInfoResult> {
-        return await this.iblFetch('getEosInfo')
+        // return await this.iblFetch('getEosInfo')
+        return await this.fetch("/v1/chain/get_info", {});
     }
 
     /** Raw call to `/v1/chain/get_producer_schedule` */
@@ -134,7 +136,8 @@ export default class JsonRpc implements AuthorityProvider, AbiProvider {
     /** Raw call to `/v1/chain/get_raw_code_and_abi` */
     // tslint:disable-next-line:variable-name
     public async get_raw_code_and_abi(account_name: string): Promise<GetRawCodeAndAbiResult> {
-        return await this.iblFetch('getEosRawCodeAndAbi', { accountName: account_name });
+        // return await this.iblFetch('getEosRawCodeAndAbi', { accountName: account_name });
+        return await this.fetch("/v1/chain/get_raw_code_and_abi", { account_name });
     }
 
     /** calls `/v1/chain/get_raw_code_and_abi` and pulls out unneeded raw wasm code */
@@ -175,9 +178,13 @@ export default class JsonRpc implements AuthorityProvider, AbiProvider {
 
     /** Get subset of `availableKeys` needed to meet authorities in `transaction`. Implements `AuthorityProvider` */
     public async getRequiredKeys(args: AuthorityProviderArgs): Promise<string[]> {
-        return convertLegacyPublicKeys((await this.iblFetch("getEosRequiredKeys", {
+        // return convertLegacyPublicKeys((await this.iblFetch("getEosRequiredKeys", {
+        //     transaction: args.transaction,
+        //     availableKeys: args.availableKeys,
+        // })).required_keys);
+        return convertLegacyPublicKeys((await this.fetch("/v1/chain/get_required_keys", {
             transaction: args.transaction,
-            availableKeys: args.availableKeys,
+            available_keys: args.availableKeys,
         })).required_keys);
     }
 
